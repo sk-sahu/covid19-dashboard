@@ -1,0 +1,106 @@
+---
+title: "covid-19 India dashboard"
+output: 
+  flexdashboard::flex_dashboard:
+    orientation: rows
+    social: menu
+    source_code: embed
+    vertical_layout: fill
+---
+
+
+```{r setup, include=FALSE}
+library(flexdashboard)
+library(jsonlite)
+library(dplyr)
+library(magrittr)
+library(DT)
+library(dygraphs)
+library(tbl2xts)
+library(lubridate)
+```
+
+```{r get_data}
+url <- "https://pomber.github.io/covid19/timeseries.json"
+covid19_data <- fromJSON(url)
+```
+
+```{r colors_set}
+confirmed_color <- "purple"
+active_color <- "#1f77b4"
+recovered_color <- "forestgreen"
+death_color <- "red"
+```
+
+```{r func_def}
+total_confirmed <- function(data){
+  tail(data$confirmed, n = 1)
+}
+total_deaths <- function(data){
+  tail(data$deaths, n = 1)
+}
+total_recovered <- function(data){
+  tail(data$recovered, n = 1)
+}
+
+total_table <- function(data){
+  all <- c(total_confirmed(data), total_deaths(data), total_recovered(data))
+  table <- data.frame(all, row.names = c("Confirmed", "Deaths", "Recovered"))
+  names(table) <- "Total Numbers"
+  return(table)
+}  
+
+```
+
+
+Summary
+=======================================================================
+Row
+-----------------------------------------------------------------------
+
+### confirmed {.value-box}
+
+```{r}
+
+valueBox(value = total_confirmed(covid19_data$India), 
+         caption = "Total Confirmed Cases", 
+         icon = "fas fa-user-md", 
+         color = confirmed_color)
+```
+
+
+### recovered {.value-box}
+
+```{r}
+valueBox(value = total_recovered(covid19_data$India), 
+         caption = "Recovered Cases", icon = "fas fa-heartbeat", 
+         color = recovered_color)
+```
+
+### death {.value-box}
+
+```{r}
+
+valueBox(value = total_deaths(covid19_data$India),
+         caption = "Death Cases", 
+         icon = "fas fa-heart-broken", 
+         color = death_color)
+```
+
+Row
+-----------------------------------------------------------------------
+
+```{r india}
+#total_table(covid19_data$India) %>% DT::datatable()
+
+t_data <- covid19_data$India %>% 
+  select(date, confirmed, recovered, deaths) %>% 
+  mutate(date =  lubridate::date(date)) %>% 
+  tbl_xts(.)
+
+dygraph(data = log10(t_data), main = "Covid India data", ylab = "log10(Numbers)") %>%
+  dyRangeSelector() %>% 
+  dyOptions(stackedGraph = TRUE, 
+            colors = c(confirmed_color, recovered_color, death_color))
+
+```
