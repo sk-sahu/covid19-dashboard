@@ -2,7 +2,7 @@ name: render
 
 on:
   schedule:
-  - cron: "0 */12 * * *"
+  - cron: "*/10 * * * *"
   push:
     branches: master
 
@@ -21,6 +21,10 @@ jobs:
       - name: Render in the container
         run: |
           Rscript render.R
+      
+      - name: Install rsync 📚
+        run: |
+          apt-get update && apt-get install -y rsync
 
       - name: Deploy 🚀
         uses: JamesIves/github-pages-deploy-action@3.5.7
