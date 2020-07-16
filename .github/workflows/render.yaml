@@ -27,4 +27,4 @@ jobs:
         with:
           GITHUB_TOKEN: ${{ secrets.TK2 }}
           BRANCH: gh-pages
-          FOLDER: docs
+          FOLDER: .
