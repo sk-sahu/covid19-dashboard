@@ -4,8 +4,10 @@ output:
   flexdashboard::flex_dashboard:
     orientation: rows
     social: menu
-    source_code: embed
+    #source_code: embed
     vertical_layout: fill
+    includes:
+       in_header: gtag.html
 ---
 
 
@@ -110,7 +112,7 @@ t_data <- covid19_data$India %>%
   mutate(date =  lubridate::date(date)) %>% 
   tbl_xts(.)
 
-dygraph(data = log10(t_data), main = "Covid India Curve", ylab = "log10(Numbers)") %>%
+dygraph(data = log10(t_data), main = "COVID-19 India Curve", ylab = "log10(Numbers)") %>%
   dyRangeSelector() %>% 
   dyOptions(stackedGraph = TRUE, 
             colors = c(confirmed_color, recovered_color, death_color))
@@ -121,7 +123,7 @@ dygraph(data = log10(t_data), main = "Covid India Curve", ylab = "log10(Numbers)
 About
 =======================================================================
 
-This is a simple project to create a dashboard with few calculations and representations for current COVID-19 pandemic and its affect on India.
+This is a project to create a simple dashboard with few calculations and representations for current COVID-19 pandemic and its affect on India.
 
 Data Source: https://github.com/pomber/covid19/ ([JSON](https://pomber.github.io/covid19/timeseries.json))
 
