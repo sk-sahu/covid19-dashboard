@@ -1,5 +1,5 @@
 ---
-title: "covid-19 India dashboard"
+title: "COVID-19 India Dashboard"
 output: 
   flexdashboard::flex_dashboard:
     orientation: rows
@@ -33,14 +33,24 @@ death_color <- "red"
 ```
 
 ```{r func_def}
+# takes a dataframe covid19_data$India
 total_confirmed <- function(data){
-  tail(data$confirmed, n = 1)
+  tail(data$confirmed, n = 2)[-2]
+}
+new_confirmed <- function(data){
+  tail(data$confirmed, n=1) - tail(data$confirmed, n=2)[-2]
 }
 total_deaths <- function(data){
-  tail(data$deaths, n = 1)
+  tail(data$deaths, n = 2)[-2]
+}
+new_deaths <- function(data){
+  tail(data$deaths, n=1) - tail(data$deaths, n=2)[-2]
 }
 total_recovered <- function(data){
-  tail(data$recovered, n = 1)
+  tail(data$recovered, n = 2)[-2]
+}
+new_recovered <- function(data){
+  tail(data$recovered, n=1) - tail(data$recovered, n=2)[-2]
 }
 
 total_table <- function(data){
@@ -61,9 +71,9 @@ Row
 ### confirmed {.value-box}
 
 ```{r}
-
-valueBox(value = total_confirmed(covid19_data$India), 
-         caption = "Total Confirmed Cases", 
+valueBox(value = paste(total_confirmed(covid19_data$India), 
+                       "(+",new_confirmed(covid19_data$India), ")"), 
+         caption = paste("Total Confirmed Cases", "(Last Update: ",tail(covid19_data$India, n=1)$date, ")"), 
          icon = "fas fa-user-md", 
          color = confirmed_color)
 ```
@@ -72,7 +82,8 @@ valueBox(value = total_confirmed(covid19_data$India),
 ### recovered {.value-box}
 
 ```{r}
-valueBox(value = total_recovered(covid19_data$India), 
+valueBox(value = paste(total_recovered(covid19_data$India),
+                       "(+",new_recovered(covid19_data$India), ")"), 
          caption = "Recovered Cases", icon = "fas fa-heartbeat", 
          color = recovered_color)
 ```
@@ -81,7 +92,8 @@ valueBox(value = total_recovered(covid19_data$India),
 
 ```{r}
 
-valueBox(value = total_deaths(covid19_data$India),
+valueBox(value = paste(total_deaths(covid19_data$India),
+                       "(+",new_deaths(covid19_data$India), ")"), 
          caption = "Death Cases", 
          icon = "fas fa-heart-broken", 
          color = death_color)
@@ -98,9 +110,22 @@ t_data <- covid19_data$India %>%
   mutate(date =  lubridate::date(date)) %>% 
   tbl_xts(.)
 
-dygraph(data = log10(t_data), main = "Covid India data", ylab = "log10(Numbers)") %>%
+dygraph(data = log10(t_data), main = "Covid India Curve", ylab = "log10(Numbers)") %>%
   dyRangeSelector() %>% 
   dyOptions(stackedGraph = TRUE, 
             colors = c(confirmed_color, recovered_color, death_color))
 
 ```
+
+
+About
+=======================================================================
+
+This is a simple project to create a dashboard with few calculations and representations for current COVID-19 pandemic and its affect on India.
+
+Current Data Source: https://pomber.github.io/covid19/
+
+**This site auto updates in every 12 hours.**
+
+Project Source Code: https://github.com/sk-sahu/covid19-dashboard
+
