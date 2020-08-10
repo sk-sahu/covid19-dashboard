@@ -127,6 +127,6 @@ This is a project to create a simple dashboard with few calculations and represe
 
 Data Source: https://github.com/pomber/covid19/ ([JSON](https://pomber.github.io/covid19/timeseries.json))
 
-**This site auto updates in every 12 hours.**
+**This site auto updates in every 6 hours.**
 
 Project Source Code: https://github.com/sk-sahu/covid19-dashboard
