@@ -27,7 +27,7 @@ jobs:
           apt-get update && apt-get install -y rsync
 
       - name: Deploy 🚀
-        uses: JamesIves/github-pages-deploy-action@3.5.7
+        uses: JamesIves/github-pages-deploy-action@3.7.1
         with:
           GIT_CONFIG_NAME: sudosk
           GIT_CONFIG_EMAIL: to.sangramkeshari@gmail.com
